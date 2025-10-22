@@ -128,32 +128,42 @@ int main(int argc, char* argv[]) {
         // update
         neu::GetEngine().Update();
         if (neu::GetEngine().GetInput().GetKeyPressed(SDL_SCANCODE_ESCAPE)) quit = true;
+        
+        /*float angle = neu::GetEngine().GetTime().GetTime() * 90.0f;
+        float scale = neu::math::Remap(-1.0f, 1.0f, 0.3f, 1.5f, neu::math::sin(neu::GetEngine().GetTime().GetTime()));
+		
+        neu::vec2 mouse = neu::GetEngine().GetInput().GetMousePosition();
+        neu::vec2 position;
+
+		position.x = neu::math::Remap(0.0f, (float)neu::GetEngine().GetRenderer().GetWidth(), -1.0f, 1.0f, mouse.x);
+		position.y = neu::math::Remap(0.0f, (float)neu::GetEngine().GetRenderer().GetHeight(), 1.0f, -1.0f, mouse.y);*/
+
         glUniform1f(uniform, neu::GetEngine().GetTime().GetTime());
         
+
         // draw
         neu::vec3 color{ 0, 0, 0 };
         neu::GetEngine().GetRenderer().SetColor(color.r, color.g, color.b);
         neu::GetEngine().GetRenderer().Clear();
-
-        // draw
-        neu::GetEngine().GetRenderer().Clear();
         glBindVertexArray(vao);
         glDrawArrays(GL_TRIANGLES, 0, (GLsizei)points.size());
 
-        /*glPushMatrix();
-		glScalef(sin(neu::GetEngine().GetTime().GetTime()) * 0.5f + 1, sin(neu::GetEngine().GetTime().GetTime()) * 0.5f + 1, 1);
-		glRotatef(neu::GetEngine().GetTime().GetTime() * 90, 0, 0, 1);
-		glTranslatef(neu::GetEngine().GetInput().GetMousePosition().x * 0.001f, neu::GetEngine().GetInput().GetMousePosition().y * 0.001f, 0);
-     
+        /*glLoadIdentity();
 
+        glPushMatrix();
+		glScalef(scale, scale, 0);
+		glRotatef(angle, 0, 0, 1);
+		glTranslatef(position.x, position.y, 0);
+     
+        glBegin(GL_TRIANGLES);
 
         for (int i = 0; i < points.size(); i++) {
-            glBegin(GL_TRIANGLES);
             glColor3f(colors[i].r, colors[i].g, colors[i].b);
             glVertex3f(points[i].x, points[i].y, points[i].z);
-            glEnd();
         }
-		glPopMatrix();*/
+		glPopMatrix();
+            
+        glEnd();*/
 
         neu::GetEngine().GetRenderer().Present();
 
