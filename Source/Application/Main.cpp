@@ -34,14 +34,17 @@ int main(int argc, char* argv[]) {
     //glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
     //glBufferData(GL_ARRAY_BUFFER, sizeof(neu::vec3) * texcoord.size(), texcoord.data(), GL_STATIC_DRAW);
 
+    //vertex array
     GLuint vao;
     glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 
+    //position
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
+    //color
     glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
@@ -114,8 +117,9 @@ int main(int argc, char* argv[]) {
         glGetProgramInfoLog(shaderProgram, (GLsizei)infoLog.size(), &length, &infoLog[0]);
         infoLog.resize(length);
 
-        LOG_WARNING("Shader Link compilation failed: {}", infoLog);
+        LOG_WARNING("Program Link compilation failed: {}", infoLog);
     }
+    glUseProgram(shaderProgram);
 
     // MAIN LOOP
     while (!quit) {
@@ -128,6 +132,7 @@ int main(int argc, char* argv[]) {
         // update
         neu::GetEngine().Update();
         if (neu::GetEngine().GetInput().GetKeyPressed(SDL_SCANCODE_ESCAPE)) quit = true;
+        glUniform1f(uniform, neu::GetEngine().GetTime().GetTime());
         
         /*float angle = neu::GetEngine().GetTime().GetTime() * 90.0f;
         float scale = neu::math::Remap(-1.0f, 1.0f, 0.3f, 1.5f, neu::math::sin(neu::GetEngine().GetTime().GetTime()));
@@ -138,7 +143,6 @@ int main(int argc, char* argv[]) {
 		position.x = neu::math::Remap(0.0f, (float)neu::GetEngine().GetRenderer().GetWidth(), -1.0f, 1.0f, mouse.x);
 		position.y = neu::math::Remap(0.0f, (float)neu::GetEngine().GetRenderer().GetHeight(), 1.0f, -1.0f, mouse.y);*/
 
-        glUniform1f(uniform, neu::GetEngine().GetTime().GetTime());
         
 
         // draw
