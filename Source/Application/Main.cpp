@@ -16,11 +16,11 @@ int main(int argc, char* argv[]) {
     //OPENGL Initialization
     std::vector<neu::vec3> points{ { -0.5f, -0.5f, 0 }, { 0, 0.5f, 0 }, { 0.5f, -0.5f, 0 } }; 
     std::vector<neu::vec3> colors{ { 1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 } };
-    //std::vector<neu::vec2> texcoord{ {0,0}, {0.5f,1.0f}, {1,1} };
+    std::vector<neu::vec2> texcoord{ {0,0}, {0.5f,1.0f}, {1,1} };
 
-    GLuint vbo[2];
-    
-    glGenBuffers(2, vbo);
+
+    GLuint vbo[3];    
+    glGenBuffers(3, vbo);
 
     //vertex buffer (position)
     glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
@@ -31,8 +31,8 @@ int main(int argc, char* argv[]) {
     glBufferData(GL_ARRAY_BUFFER, sizeof(neu::vec3) * colors.size(), colors.data(), GL_STATIC_DRAW);
 
     //vertex buffer (texcoord)
-    //glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
-    //glBufferData(GL_ARRAY_BUFFER, sizeof(neu::vec3) * texcoord.size(), texcoord.data(), GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(neu::vec2) * texcoord.size(), texcoord.data(), GL_STATIC_DRAW);
 
     //vertex array
     GLuint vao;
@@ -49,9 +49,10 @@ int main(int argc, char* argv[]) {
     glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-   /* glEnableVertexAttribArray(2);
+    //texcoord
+    glEnableVertexAttribArray(2);
     glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, NULL);*/
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
     //vertex shader
     std::string vs_source;
@@ -74,8 +75,6 @@ int main(int argc, char* argv[]) {
 
         LOG_WARNING("Shader compilation failed: {}", infoLog);
     }
-
-
 
     //fragment shader 
 	std::string fs_source;
@@ -105,9 +104,6 @@ int main(int argc, char* argv[]) {
     glLinkProgram(shaderProgram);
     glUseProgram(shaderProgram);
 
-    // uniform
-    GLint uniform = glGetUniformLocation(shaderProgram, "u_time");
-    ASSERT(uniform != -1);
 
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
     if (!success)
@@ -120,6 +116,16 @@ int main(int argc, char* argv[]) {
         LOG_WARNING("Program Link compilation failed: {}", infoLog);
     }
     glUseProgram(shaderProgram);
+
+    //textures
+    neu::res_t<neu::Texture> texture = neu::Resources().Get<neu::Texture>("textures/beast.png");
+
+    // uniform
+    GLint uniform = glGetUniformLocation(shaderProgram, "u_time");
+    ASSERT(uniform != -1);
+
+    GLint tex_uniform = glGetUniformLocation(shaderProgram, "u_texture");
+    glUniform1i(tex_uniform, 0);
 
     // MAIN LOOP
     while (!quit) {
@@ -146,8 +152,6 @@ int main(int argc, char* argv[]) {
         
 
         // draw
-        neu::vec3 color{ 0, 0, 0 };
-        neu::GetEngine().GetRenderer().SetColor(color.r, color.g, color.b);
         neu::GetEngine().GetRenderer().Clear();
         glBindVertexArray(vao);
         glDrawArrays(GL_TRIANGLES, 0, (GLsizei)points.size());
