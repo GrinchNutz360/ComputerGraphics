@@ -47,6 +47,8 @@
 #include "Renderer/Text.h"
 #include "Renderer/Texture.h"
 #include "Renderer/TextureAnimation.h"
+#include "Renderer/Shader.h"
+#include "Renderer/Program.h"
 
 // physics
 #include "Physics/Collidable.h"

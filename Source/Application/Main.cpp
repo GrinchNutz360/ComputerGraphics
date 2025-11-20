@@ -54,78 +54,63 @@ int main(int argc, char* argv[]) {
     glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
-    //vertex shader
-    std::string vs_source;
-    neu::file::ReadTextFile("shaders/basic.vert", vs_source);
-    const char* vs_cstr = vs_source.c_str();
+    auto vs = neu::Resources().Get<neu::Shader>("shaders/basic.vert", GL_VERTEX_SHADER);
+    auto fs = neu::Resources().Get<neu::Shader>("shaders/basic.frag", GL_FRAGMENT_SHADER);
 
-    GLuint vs;
-    vs = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vs, 1, &vs_cstr, NULL);
+ //   //vertex shader
+ //   std::string vs_source;
+ //   neu::file::ReadTextFile("shaders/basic.vert", vs_source);
+ //   const char* vs_cstr = vs_source.c_str();
 
-    glCompileShader(vs);
-    int success;
-    glGetShaderiv(vs, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        std::string infoLog(512, '\0');  // pre-allocate space
-        GLsizei length;
-        glGetShaderInfoLog(vs, (GLsizei)infoLog.size(), &length, &infoLog[0]);
-        infoLog.resize(length);
+ //   GLuint vs;
+ //   vs = glCreateShader(GL_VERTEX_SHADER);
+ //   glShaderSource(vs, 1, &vs_cstr, NULL);
 
-        LOG_WARNING("Shader compilation failed: {}", infoLog);
-    }
+ //   glCompileShader(vs);
+ //   
+ //   glGetShaderiv(vs, GL_COMPILE_STATUS, &success);
+ //   if (!success)
+ //   {
+ //       std::string infoLog(512, '\0');  // pre-allocate space
+ //       GLsizei length;
+ //       glGetShaderInfoLog(vs, (GLsizei)infoLog.size(), &length, &infoLog[0]);
+ //       infoLog.resize(length);
 
-    //fragment shader 
-	std::string fs_source;
-	neu::file::ReadTextFile("shaders/basic.frag", fs_source);
-	const char* fs_cstr = fs_source.c_str();
+ //       LOG_WARNING("Shader compilation failed: {}", infoLog);
+ //   }
 
-	GLuint fs;
-	fs = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fs, 1, &fs_cstr, NULL);
-	glCompileShader(fs);
+ //   //fragment shader 
+	//std::string fs_source;
+	//neu::file::ReadTextFile("shaders/basic.frag", fs_source);
+	//const char* fs_cstr = fs_source.c_str();
 
-    glGetShaderiv(fs, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        std::string infoLog(512, '\0');  // pre-allocate space
-        GLsizei length;
-        glGetShaderInfoLog(fs, (GLsizei)infoLog.size(), &length, &infoLog[0]);
-        infoLog.resize(length);
+	//GLuint fs;
+	//fs = glCreateShader(GL_FRAGMENT_SHADER);
+	//glShaderSource(fs, 1, &fs_cstr, NULL);
+	//glCompileShader(fs);
 
-        LOG_WARNING("Shader compilation failed: {}", infoLog);
-    }
+ //   glGetShaderiv(fs, GL_COMPILE_STATUS, &success);
+ //   if (!success)
+ //   {
+ //       std::string infoLog(512, '\0');  // pre-allocate space
+ //       GLsizei length;
+ //       glGetShaderInfoLog(fs, (GLsizei)infoLog.size(), &length, &infoLog[0]);
+ //       infoLog.resize(length);
+
+ //       LOG_WARNING("Shader compilation failed: {}", infoLog);
+ //   }
 
     // shader program
-    GLuint shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vs);
-    glAttachShader(shaderProgram, fs);
-    glLinkProgram(shaderProgram);
-    glUseProgram(shaderProgram);
+    auto program = std::make_shared<neu::Program>();
+    program->AttachShader(vs);
+    program->AttachShader(fs);
+    program->Link();
+    program->Use();
 
-
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    if (!success)
-    {
-        std::string infoLog(512, '\0');  // pre-allocate space
-        GLsizei length;
-        glGetProgramInfoLog(shaderProgram, (GLsizei)infoLog.size(), &length, &infoLog[0]);
-        infoLog.resize(length);
-
-        LOG_WARNING("Program Link compilation failed: {}", infoLog);
-    }
-    glUseProgram(shaderProgram);
-
+    
     //textures
     neu::res_t<neu::Texture> texture = neu::Resources().Get<neu::Texture>("textures/beast.png");
 
-    // uniform
-    GLint uniform = glGetUniformLocation(shaderProgram, "u_time");
-    ASSERT(uniform != -1);
-
-    GLint tex_uniform = glGetUniformLocation(shaderProgram, "u_texture");
-    glUniform1i(tex_uniform, 0);
 
     // MAIN LOOP
     while (!quit) {
@@ -138,7 +123,7 @@ int main(int argc, char* argv[]) {
         // update
         neu::GetEngine().Update();
         if (neu::GetEngine().GetInput().GetKeyPressed(SDL_SCANCODE_ESCAPE)) quit = true;
-        glUniform1f(uniform, neu::GetEngine().GetTime().GetTime());
+        program->SetUniform("u_time", neu::GetEngine().GetTime().GetTime());
         
         /*float angle = neu::GetEngine().GetTime().GetTime() * 90.0f;
         float scale = neu::math::Remap(-1.0f, 1.0f, 0.3f, 1.5f, neu::math::sin(neu::GetEngine().GetTime().GetTime()));
