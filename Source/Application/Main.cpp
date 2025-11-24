@@ -107,6 +107,10 @@ int main(int argc, char* argv[]) {
     program->Link();
     program->Use();
 
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(0.5f, 0.0f, 0.0f));
+    model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
     
     //textures
     neu::res_t<neu::Texture> texture = neu::Resources().Get<neu::Texture>("textures/beast.png");
@@ -124,6 +128,8 @@ int main(int argc, char* argv[]) {
         neu::GetEngine().Update();
         if (neu::GetEngine().GetInput().GetKeyPressed(SDL_SCANCODE_ESCAPE)) quit = true;
         program->SetUniform("u_time", neu::GetEngine().GetTime().GetTime());
+        program->SetUniform("u_model", model);
+		
         
         /*float angle = neu::GetEngine().GetTime().GetTime() * 90.0f;
         float scale = neu::math::Remap(-1.0f, 1.0f, 0.3f, 1.5f, neu::math::sin(neu::GetEngine().GetTime().GetTime()));
@@ -139,7 +145,8 @@ int main(int argc, char* argv[]) {
         // draw
         neu::GetEngine().GetRenderer().Clear();
         glBindVertexArray(vao);
-        glDrawArrays(GL_TRIANGLES, 0, (GLsizei)points.size());
+        
+        
 
         /*glLoadIdentity();
 
@@ -158,6 +165,7 @@ int main(int argc, char* argv[]) {
             
         glEnd();*/
 
+   
         neu::GetEngine().GetRenderer().Present();
 
     }

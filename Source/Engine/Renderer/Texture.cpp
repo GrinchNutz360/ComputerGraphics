@@ -29,6 +29,7 @@ namespace neu {
             LOG_ERROR("Could not load image: {}", filename);
             return false;
         }
+        SDL_FlipSurface(surface, SDL_FLIP_VERTICAL);
 
         const SDL_PixelFormatDetails* details = SDL_GetPixelFormatDetails(surface->format);
 

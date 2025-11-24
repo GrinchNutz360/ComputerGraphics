@@ -70,16 +70,16 @@ namespace neu {
 		if (location != -1) glUniform1i(location, (int)value);
 	}
 
-	void Program::SetUniform(const std::string& name, const neu::vec2& value)
+	void Program::SetUniform(const std::string& name, const glm::mat3& value)
 	{
 		GLint location = GetUniformLocation(name);
-		if (location != -1) glUniform2f(location, value.x, value.y);
+		if (location != -1) glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(value));
 	}
 
-	void Program::SetUniform(const std::string& name, const neu::vec3& value)
+	void Program::SetUniform(const std::string& name, const glm::mat4& value)
 	{
 		GLint location = GetUniformLocation(name);
-		if (location != -1) glUniform3f(location, value.x, value.y, value.z);
+		if (location != -1) glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
 	}
 
 	GLint Program::GetUniformLocation(const std::string& name)
