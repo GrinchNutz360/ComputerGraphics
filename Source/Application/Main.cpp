@@ -14,45 +14,50 @@ int main(int argc, char* argv[]) {
     bool quit = false;
 
     //OPENGL Initialization
-    std::vector<neu::vec3> points{ { -0.5f, -0.5f, 0 }, { 0, 0.5f, 0 }, { 0.5f, -0.5f, 0 } }; 
-    std::vector<neu::vec3> colors{ { 1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 } };
-    std::vector<neu::vec2> texcoord{ {0,0}, {0.5f,1.0f}, {1,1} };
+    struct Vertex {
+        neu::vec3 position;
+        neu::vec3 color;
+        neu::vec2 textcoords;
+    };
 
+    std::vector<Vertex> vertices{
+        {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+        {{ -0.5f, 0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f}},
+        {{ 0.5f,  0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
+        {{ 0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f}},
+    };
 
-    GLuint vbo[3];    
-    glGenBuffers(3, vbo);
+    std::vector<GLuint> indices{
+       0, 1, 2,
+       0, 2, 3
+    };
 
-    //vertex buffer (position)
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(neu::vec3) * points.size(),points.data(), GL_STATIC_DRAW);
+    GLuint vbo;
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)* vertices.size(), vertices.data(), GL_STATIC_DRAW);
 
-    //vertex buffer (color)
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(neu::vec3) * colors.size(), colors.data(), GL_STATIC_DRAW);
-
-    //vertex buffer (texcoord)
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(neu::vec2) * texcoord.size(), texcoord.data(), GL_STATIC_DRAW);
+    // index buffer
+    GLuint ibo;
+    glGenBuffers(1, &ibo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint)* indices.size(), indices.data(), GL_STATIC_DRAW);
 
     //vertex array
     GLuint vao;
     glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 
-    //position
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+
     glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-    //color
     glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-    //texcoord
     glEnableVertexAttribArray(2);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, textcoords));
 
     auto vs = neu::Resources().Get<neu::Shader>("shaders/basic.vert", GL_VERTEX_SHADER);
     auto fs = neu::Resources().Get<neu::Shader>("shaders/basic.frag", GL_FRAGMENT_SHADER);
@@ -114,7 +119,7 @@ int main(int argc, char* argv[]) {
     
     //textures
     neu::res_t<neu::Texture> texture = neu::Resources().Get<neu::Texture>("textures/beast.png");
-
+	program->SetUniform("u_texture", 0);
 
     // MAIN LOOP
     while (!quit) {
@@ -128,7 +133,6 @@ int main(int argc, char* argv[]) {
         neu::GetEngine().Update();
         if (neu::GetEngine().GetInput().GetKeyPressed(SDL_SCANCODE_ESCAPE)) quit = true;
         program->SetUniform("u_time", neu::GetEngine().GetTime().GetTime());
-        program->SetUniform("u_model", model);
 		
         
         /*float angle = neu::GetEngine().GetTime().GetTime() * 90.0f;
@@ -144,8 +148,9 @@ int main(int argc, char* argv[]) {
 
         // draw
         neu::GetEngine().GetRenderer().Clear();
+        program->SetUniform("u_model", model);
         glBindVertexArray(vao);
-        
+        glDrawElements(GL_TRIANGLES, (GLsizei)indices.size(), GL_UNSIGNED_INT, 0);
         
 
         /*glLoadIdentity();
