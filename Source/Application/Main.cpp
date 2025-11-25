@@ -32,78 +32,9 @@ int main(int argc, char* argv[]) {
        0, 2, 3
     };
 
-    GLuint vbo;
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)* vertices.size(), vertices.data(), GL_STATIC_DRAW);
-
-    // index buffer
-    GLuint ibo;
-    glGenBuffers(1, &ibo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint)* indices.size(), indices.data(), GL_STATIC_DRAW);
-
-    //vertex array
-    GLuint vao;
-    glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, textcoords));
-
+    
     auto vs = neu::Resources().Get<neu::Shader>("shaders/basic.vert", GL_VERTEX_SHADER);
     auto fs = neu::Resources().Get<neu::Shader>("shaders/basic.frag", GL_FRAGMENT_SHADER);
-
- //   //vertex shader
- //   std::string vs_source;
- //   neu::file::ReadTextFile("shaders/basic.vert", vs_source);
- //   const char* vs_cstr = vs_source.c_str();
-
- //   GLuint vs;
- //   vs = glCreateShader(GL_VERTEX_SHADER);
- //   glShaderSource(vs, 1, &vs_cstr, NULL);
-
- //   glCompileShader(vs);
- //   
- //   glGetShaderiv(vs, GL_COMPILE_STATUS, &success);
- //   if (!success)
- //   {
- //       std::string infoLog(512, '\0');  // pre-allocate space
- //       GLsizei length;
- //       glGetShaderInfoLog(vs, (GLsizei)infoLog.size(), &length, &infoLog[0]);
- //       infoLog.resize(length);
-
- //       LOG_WARNING("Shader compilation failed: {}", infoLog);
- //   }
-
- //   //fragment shader 
-	//std::string fs_source;
-	//neu::file::ReadTextFile("shaders/basic.frag", fs_source);
-	//const char* fs_cstr = fs_source.c_str();
-
-	//GLuint fs;
-	//fs = glCreateShader(GL_FRAGMENT_SHADER);
-	//glShaderSource(fs, 1, &fs_cstr, NULL);
-	//glCompileShader(fs);
-
- //   glGetShaderiv(fs, GL_COMPILE_STATUS, &success);
- //   if (!success)
- //   {
- //       std::string infoLog(512, '\0');  // pre-allocate space
- //       GLsizei length;
- //       glGetShaderInfoLog(fs, (GLsizei)infoLog.size(), &length, &infoLog[0]);
- //       infoLog.resize(length);
-
- //       LOG_WARNING("Shader compilation failed: {}", infoLog);
- //   }
 
     // shader program
     auto program = std::make_shared<neu::Program>();
@@ -112,14 +43,18 @@ int main(int argc, char* argv[]) {
     program->Link();
     program->Use();
 
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.5f, 0.0f, 0.0f));
-    model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+	//model
+    auto model3d = std::make_shared<neu::Model>();
+	model3d->Load("models/sphere.obj");
     
     //textures
     neu::res_t<neu::Texture> texture = neu::Resources().Get<neu::Texture>("textures/beast.png");
 	program->SetUniform("u_texture", 0);
+
+
+    float rotation = 0.0f;
+
+    glm::vec3 eye{ 0, 0, 5 };
 
     // MAIN LOOP
     while (!quit) {
@@ -131,44 +66,33 @@ int main(int argc, char* argv[]) {
 
         // update
         neu::GetEngine().Update();
+        neu::vec3 color{ 0, 0, 0 };
+        float angle = neu::GetEngine().GetTime().GetTime() * 50;        
         if (neu::GetEngine().GetInput().GetKeyPressed(SDL_SCANCODE_ESCAPE)) quit = true;
-        program->SetUniform("u_time", neu::GetEngine().GetTime().GetTime());
-		
-        
-        /*float angle = neu::GetEngine().GetTime().GetTime() * 90.0f;
-        float scale = neu::math::Remap(-1.0f, 1.0f, 0.3f, 1.5f, neu::math::sin(neu::GetEngine().GetTime().GetTime()));
-		
-        neu::vec2 mouse = neu::GetEngine().GetInput().GetMousePosition();
-        neu::vec2 position;
 
-		position.x = neu::math::Remap(0.0f, (float)neu::GetEngine().GetRenderer().GetWidth(), -1.0f, 1.0f, mouse.x);
-		position.y = neu::math::Remap(0.0f, (float)neu::GetEngine().GetRenderer().GetHeight(), 1.0f, -1.0f, mouse.y);*/
-
-        
 
         // draw
-        neu::GetEngine().GetRenderer().Clear();
+        glm::mat4 model = glm::mat4(1.0f);
+        rotation += neu::GetEngine().GetTime().GetDeltaTime() * 50;
+        // model matrix
+        model = glm::translate(model, glm::vec3(0.5f, 0.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+        model = glm::scale(model, glm::vec3(0.8f, 0.8f, 0.8f));
         program->SetUniform("u_model", model);
-        glBindVertexArray(vao);
-        glDrawElements(GL_TRIANGLES, (GLsizei)indices.size(), GL_UNSIGNED_INT, 0);
-        
 
-        /*glLoadIdentity();
+        //view matrix
+        eye.x += neu::GetEngine().GetInput().GetMouseDelta().x * 0.01f;
+        eye.z += neu::GetEngine().GetInput().GetMouseDelta().y * 0.01f;
+        glm::mat4 view = glm::lookAt(eye, eye + glm::vec3{ 0,0,-1 }, glm::vec3{ 0,1,0 });
+        program->SetUniform("u_view", view);
 
-        glPushMatrix();
-		glScalef(scale, scale, 0);
-		glRotatef(angle, 0, 0, 1);
-		glTranslatef(position.x, position.y, 0);
-     
-        glBegin(GL_TRIANGLES);
+        //projection matrix
+        float aspect = (float)neu::GetEngine().GetRenderer().GetWidth() / (float)neu::GetEngine().GetRenderer().GetHeight();
+        glm::mat4 projection = glm::perspective(glm::radians(90.0f), aspect, 0.01f, 100.0f);
+        program->SetUniform("u_projection", projection);
 
-        for (int i = 0; i < points.size(); i++) {
-            glColor3f(colors[i].r, colors[i].g, colors[i].b);
-            glVertex3f(points[i].x, points[i].y, points[i].z);
-        }
-		glPopMatrix();
-            
-        glEnd();*/
+        neu::GetEngine().GetRenderer().Clear();
+        model3d->Draw(GL_TRIANGLES);
 
    
         neu::GetEngine().GetRenderer().Present();
