@@ -13,26 +13,31 @@ int main(int argc, char* argv[]) {
     SDL_Event e;
     bool quit = false;
 
+    std::vector<neu::vec3> points;
+    std::vector<neu::vec3> colors;
+    std::vector<neu::vec2> texcoords;
+
+    //OPENGL init
+    points.push_back(neu::vec3(0.3f, 0.25f, 0.f));
+    points.push_back(neu::vec3(0.5f, 0.1f, 0.f));
+    points.push_back(neu::vec3(0.f, 0.f, 3.f));
+    colors.push_back(neu::vec3(1.f, 0.f, 0.f));
+    colors.push_back(neu::vec3(0.f, 1.f, 0.f));
+    colors.push_back(neu::vec3(0.f, 0.f, 1.f));
+    texcoords.push_back(neu::vec2(0.5f, 0.5f));
+    texcoords.push_back(neu::vec2(0.5f, 1.0f));
+    texcoords.push_back(neu::vec2(1.0f, 1.0f));
+
     //OPENGL Initialization
     struct Vertex {
         neu::vec3 position;
         neu::vec3 color;
-        neu::vec2 textcoords;
+        neu::vec2 texcoords;
     };
-
-    std::vector<Vertex> vertices{
-        {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-        {{ -0.5f, 0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f}},
-        {{ 0.5f,  0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
-        {{ 0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f}},
-    };
-
-    std::vector<GLuint> indices{
-       0, 1, 2,
-       0, 2, 3
-    };
-
     
+    
+
+    //shaders
     auto vs = neu::Resources().Get<neu::Shader>("shaders/basic.vert", GL_VERTEX_SHADER);
     auto fs = neu::Resources().Get<neu::Shader>("shaders/basic.frag", GL_FRAGMENT_SHADER);
 
@@ -45,7 +50,7 @@ int main(int argc, char* argv[]) {
 
 	//model
     auto model3d = std::make_shared<neu::Model>();
-	model3d->Load("models/sphere.obj");
+	model3d->Load("models/cube.obj");
     
     //textures
     neu::res_t<neu::Texture> texture = neu::Resources().Get<neu::Texture>("textures/beast.png");
@@ -74,6 +79,7 @@ int main(int argc, char* argv[]) {
         // draw
         glm::mat4 model = glm::mat4(1.0f);
         rotation += neu::GetEngine().GetTime().GetDeltaTime() * 50;
+
         // model matrix
         model = glm::translate(model, glm::vec3(0.5f, 0.0f, 0.0f));
         model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.0f, 0.0f, 1.0f));
@@ -90,6 +96,8 @@ int main(int argc, char* argv[]) {
         float aspect = (float)neu::GetEngine().GetRenderer().GetWidth() / (float)neu::GetEngine().GetRenderer().GetHeight();
         glm::mat4 projection = glm::perspective(glm::radians(90.0f), aspect, 0.01f, 100.0f);
         program->SetUniform("u_projection", projection);
+
+        /*vertexBuffer->Draw();*/
 
         neu::GetEngine().GetRenderer().Clear();
         model3d->Draw(GL_TRIANGLES);

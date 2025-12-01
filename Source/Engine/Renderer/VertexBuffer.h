@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 #include "Resources/Resource.h"
 #include <glad/glad.h>
 #include <vector>
