@@ -27,7 +27,14 @@ vec3 calculateLight(in vec3 position, in vec3 normal)
 	float intensity = max(dot(light_dir, normal), 0);
 	vec3 diffuse = u_light.color * intensity;
 
-	return u_ambient_light + diffuse;
+	//specular
+	vec3 reflection = reflect(-light_dir, normal);
+	vec3 view_dir = normalize(-position);
+	intensity = max(dot(reflection, view_dir), 0);
+	intensity = pow(intensity, 128);
+	vec3 specular = vec3(intensity);
+
+	return u_ambient_light + diffuse + specular;
 }
 
 void main()
