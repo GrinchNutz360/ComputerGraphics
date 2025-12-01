@@ -16,6 +16,18 @@ namespace neu {
 	/// </summary>
 	class Texture : public Resource {
 	public:
+		enum class Filter {
+			Nearest,
+			Linear
+		};
+
+		enum class Wrap {
+			Repeat,
+			RepeatMirror,
+			ClampEdge
+		};
+
+	public:
 		Texture() = default;
 		~Texture();
 
@@ -28,21 +40,28 @@ namespace neu {
 		/// <returns>True if the texture was successfully loaded; otherwise, false</returns>
 		bool Load(const std::string& filename);
 
+		void SetActive(GLuint unit) { glActiveTexture(unit); }
+		void Bind();
+
 		/// <summary>
 		/// Gets the dimensions of the texture in pixels.
 		/// </summary>
 		/// <returns>A vec2 containing the width and height of the texture</returns>
-		vec2 GetSize() { return m_size;  }
+		glm::ivec2 GetSize() { return m_size;  }
+
+		//void UpdateGui() override;
 
 		// Allow Renderer class to access the texture for drawing operations
 		friend class Renderer;
 
+	public:
 		GLuint m_texture = 0;
-
-	private:
 		GLenum m_target = GL_TEXTURE_2D;
 
+		Filter filter = Filter::Linear;
+		Wrap wrap = Wrap::Repeat;
+
 		// The dimensions of the texture in pixels
-		vec2 m_size{ 0, 0 };
+		glm::ivec2 m_size{ 0, 0 };
 	};
 }

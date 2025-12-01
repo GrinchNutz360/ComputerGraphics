@@ -24,7 +24,7 @@ namespace neu {
         glm::mat4 GetMatrix() const {
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, position);
-            model = glm::eulerAngleYXZ(rotation.y, rotation.x, rotation.z);
+            model = glm::eulerAngleYXZ(glm::radians(rotation.y), glm::radians(rotation.x), glm::radians(rotation.z));
             model = glm::scale(model, scale);
             return model;
         }

@@ -65,9 +65,6 @@
     <ClCompile Include="Core\File.cpp">
       <Filter>Source\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer\Texture.cpp">
-      <Filter>Source\Renderer</Filter>
-    </ClCompile>
     <ClCompile Include="EnginePCH.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -110,6 +107,9 @@
     <ClCompile Include="Renderer\Model.cpp">
       <Filter>Source\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="Renderer\Texture.cpp">
+      <Filter>Source\Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Random.h">
@@ -150,9 +150,6 @@
     </ClInclude>
     <ClInclude Include="Engine.h">
       <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer\Texture.h">
-      <Filter>Source\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Resources\Resource.h">
       <Filter>Source\Resources</Filter>
@@ -230,6 +227,9 @@
       <Filter>Source\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\Model.h">
+      <Filter>Source\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\Texture.h">
       <Filter>Source\Renderer</Filter>
     </ClInclude>
   </ItemGroup>
