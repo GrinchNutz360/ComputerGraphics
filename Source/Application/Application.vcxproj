@@ -208,6 +208,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\Build\Assets\imgui.ini" />
+    <None Include="..\..\Build\Assets\Materials\spot.mat" />
     <None Include="..\..\Build\Assets\Shaders\basic.frag" />
     <None Include="..\..\Build\Assets\Shaders\basic.vert" />
     <None Include="..\..\Build\Assets\Shaders\basic_lit.frag" />

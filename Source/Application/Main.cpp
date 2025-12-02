@@ -13,21 +13,6 @@ int main(int argc, char* argv[]) {
     SDL_Event e;
     bool quit = false;
 
-    std::vector<neu::vec3> points;
-    std::vector<neu::vec3> colors;
-    std::vector<neu::vec2> texcoords;
-
-    //OPENGL init
-    points.push_back(neu::vec3(0.3f, 0.25f, 0.f));
-    points.push_back(neu::vec3(0.5f, 0.1f, 0.f));
-    points.push_back(neu::vec3(0.f, 0.f, 3.f));
-    colors.push_back(neu::vec3(1.f, 0.f, 0.f));
-    colors.push_back(neu::vec3(0.f, 1.f, 0.f));
-    colors.push_back(neu::vec3(0.f, 0.f, 1.f));
-    texcoords.push_back(neu::vec2(0.5f, 0.5f));
-    texcoords.push_back(neu::vec2(0.5f, 1.0f));
-    texcoords.push_back(neu::vec2(1.0f, 1.0f));
-
     //OPENGL Initialization
     struct Vertex {
         neu::vec3 position;
@@ -35,15 +20,12 @@ int main(int argc, char* argv[]) {
         neu::vec2 texcoords;
     };
     
-    
-
-    //shaders
-    //auto vs = neu::Resources().Get<neu::Shader>("shaders/basic_lit.vert", GL_VERTEX_SHADER);
-    //auto fs = neu::Resources().Get<neu::Shader>("shaders/basic_lit.frag", GL_FRAGMENT_SHADER);
+    //material
+    auto material = neu::Resources().Get<neu::Material>("materials/spot.mat");
 
     // shader program
     auto program = neu::Resources().Get<neu::Program>("Shaders/basic_lit.prong");
-    program->Use();
+    material->program->Use();
 
 	//model
     auto model3d = std::make_shared<neu::Model>();
@@ -55,8 +37,9 @@ int main(int argc, char* argv[]) {
 
 
     // lights
-    program->SetUniform("u_ambient_light", glm::vec3{ 0.5f });
+    material->program->SetUniform("u_ambient_light", glm::vec3{ 0.5f });
     neu::Transform light{ { 2,4,3 } };
+	glm::vec3 lightColor{1};
 
     glm::vec3 eye{ 0, 0, 5 };
     neu::Transform camera{ { 0, 0, 5 } };
@@ -68,6 +51,7 @@ int main(int argc, char* argv[]) {
             if (e.type == SDL_EVENT_QUIT) {
                 quit = true;
             }
+            ImGui_ImplSDL3_ProcessEvent(&e);
         }
 
         // update
@@ -88,6 +72,10 @@ int main(int argc, char* argv[]) {
 
         //set ImGui frame
         ImGui::Begin("Editor");
+        ImGui::DragFloat3("Position", glm::value_ptr(light.position), 0.1f);
+        ImGui::ColorEdit3("Color", glm::value_ptr(lightColor));
+        ImGui::DragFloat("Shininess", &material->shininess, 0.1f);
+        ImGui::DragFloat2("tiling", glm::value_ptr(material->tiling), 0.0);
         ImGui::Text("Hello World");
         ImGui::Text("Press 'Esc' to quit.");
         ImGui::End();
@@ -100,7 +88,7 @@ int main(int argc, char* argv[]) {
         model = glm::translate(model, glm::vec3(0.5f, 0.0f, 0.0f));
         model = glm::rotate(model, glm::radians(transform.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
         model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
-        program->SetUniform("u_model", model);
+        material->program->SetUniform("u_model", model);
 
         //view matrix
         float speed = 10.0f;
@@ -110,21 +98,22 @@ int main(int argc, char* argv[]) {
         if (neu::GetEngine().GetInput().GetKeyDown(SDL_SCANCODE_W)) camera.position.y -= speed * dt;
         
         glm::mat4 view = glm::lookAt(camera.position, camera.position + glm::vec3{ 0, 0, -1 }, glm::vec3{ 0, 1, 0 });
-        program->SetUniform("u_view", view);
+        material->program->SetUniform("u_view", view);
 
-        program->SetUniform("u_light.position", (glm::vec3)(view* glm::vec4(light.position, 1)));
+        material->program->SetUniform("u_light.position", (glm::vec3)(view* glm::vec4(light.position, 1)));
         light.position.x = neu::math::sin(neu::GetEngine().GetTime().GetTime() * 2) * 30;
-        program->SetUniform("u_light.color", glm::vec3{ 0,25,0 });
+        material->program->SetUniform("u_light.color", glm::vec3{ 0,25,0 });
 
         //projection matrix
         float aspect = (float)neu::GetEngine().GetRenderer().GetWidth() / (float)neu::GetEngine().GetRenderer().GetHeight();
         glm::mat4 projection = glm::perspective(glm::radians(90.0f), aspect, 0.01f, 100.0f);
-        program->SetUniform("u_projection", projection);
+        material->program->SetUniform("u_projection", projection);
 
         /*vertexBuffer->Draw();*/
 
         neu::GetEngine().GetRenderer().Clear();
         
+        material->Bind();
         model3d->Draw(GL_TRIANGLES);
 
         // draw ImGui
