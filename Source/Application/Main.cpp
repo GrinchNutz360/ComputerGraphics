@@ -80,7 +80,20 @@ int main(int argc, char* argv[]) {
 
 
         // draw
+
+        //start new ImGui frame
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplSDL3_NewFrame();
+        ImGui::NewFrame();
+
+        //set ImGui frame
+        ImGui::Begin("Editor");
+        ImGui::Text("Hello World");
+        ImGui::Text("Press 'Esc' to quit.");
+        ImGui::End();
+
         glm::mat4 model = glm::mat4(1.0f);
+        
         
 
         // model matrix
@@ -111,7 +124,12 @@ int main(int argc, char* argv[]) {
         /*vertexBuffer->Draw();*/
 
         neu::GetEngine().GetRenderer().Clear();
+        
         model3d->Draw(GL_TRIANGLES);
+
+        // draw ImGui
+        ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
    
         neu::GetEngine().GetRenderer().Present();
