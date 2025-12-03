@@ -53,6 +53,15 @@
     <None Include="..\..\Build\Assets\imgui.ini">
       <Filter>Assets</Filter>
     </None>
+    <None Include="..\..\Build\Assets\Shaders\basic_phong.frag">
+      <Filter>Assets\Shaders</Filter>
+    </None>
+    <None Include="..\..\Build\Assets\Shaders\basic_phong.prong">
+      <Filter>Assets\Shaders</Filter>
+    </None>
+    <None Include="..\..\Build\Assets\Shaders\basic_phong.vert">
+      <Filter>Assets\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\Build\Assets\Textures\beast.png">
