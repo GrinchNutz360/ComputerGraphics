@@ -27,6 +27,9 @@ int main(int argc, char* argv[]) {
     auto program = neu::Resources().Get<neu::Program>("Shaders/basic_lit.prong");
     material->program->Use();
 
+    auto scene = std::make_unique<neu::Scene>();
+    scene->Load("scenes/scene01.json");
+
 	//model
     auto model3d = std::make_shared<neu::Model>();
 	model3d->Load("models/cow.obj");
@@ -58,9 +61,10 @@ int main(int argc, char* argv[]) {
         neu::GetEngine().Update();
         float dt = neu::GetEngine().GetTime().GetDeltaTime();
         neu::vec3 color{ 0, 0, 0 };
-        transform.rotation.y += 90 * dt;
+        //transform.rotation.y += 90 * dt;
         float angle = neu::GetEngine().GetTime().GetTime() * 50;        
         if (neu::GetEngine().GetInput().GetKeyPressed(SDL_SCANCODE_ESCAPE)) quit = true;
+        scene->Update(dt);
 
 
         // draw
@@ -74,10 +78,8 @@ int main(int argc, char* argv[]) {
         ImGui::Begin("Editor");
         ImGui::DragFloat3("Position", glm::value_ptr(light.position), 0.1f);
         ImGui::ColorEdit3("Color", glm::value_ptr(lightColor));
-        ImGui::DragFloat("Shininess", &material->shininess, 0.1f);
-        ImGui::DragFloat2("tiling", glm::value_ptr(material->tiling), 0.0);
-        ImGui::Text("Hello World");
-        ImGui::Text("Press 'Esc' to quit.");
+         transform.UpdateGUI();
+        material->UpdateGUI();
         ImGui::End();
 
         glm::mat4 model = glm::mat4(1.0f);
@@ -115,6 +117,8 @@ int main(int argc, char* argv[]) {
         
         material->Bind();
         model3d->Draw(GL_TRIANGLES);
+
+        scene->Draw(neu::GetEngine().GetRenderer());
 
         // draw ImGui
         ImGui::Render();
