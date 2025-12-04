@@ -33,6 +33,11 @@ namespace neu {
             return GetMatrix();
         }
 
+        glm::vec3 Forward() const { return glm::quat{ glm::radians(rotation) } *glm::vec3{ 0,0,1 }; }
+        glm::vec3 Up() const { return glm::quat{ glm::radians(rotation) } *glm::vec3{ 0,0,1 }; }
+        glm::vec3 Down() const { return glm::quat{ glm::radians(rotation) } *glm::vec3{ 0,0,1 }; }
+
+
         void Read(const serial_data_t& value) override;
         void UpdateGUI() override;
     };

@@ -78,6 +78,59 @@ namespace neu {
     /// </summary>
     /// <param name="renderer">The renderer used to draw the actors.</param>
     void Scene::Draw(Renderer& renderer) {
+        //light
+        LightComponent* light = nullptr;
+
+        for (auto& actor : m_actors)
+        {
+            if (!actor->active) continue;
+
+            auto comp = actor->GetComponent<LightComponent>();
+            if (comp && comp->active) {
+                light = comp;
+                break;
+            }
+        }
+
+        //camera
+        CameraComponent* camera = nullptr;
+
+        for (auto& actor : m_actors)
+        {
+            if (!actor->active) continue;
+
+            auto comp = actor->GetComponent<CameraComponent>();
+            if (comp && comp->active) {
+                camera = comp;
+                break;
+            }
+        }
+
+        if (!camera) {
+            LOG_WARNING("No active camera was found in scene.");
+            return;
+        }
+
+        // get programs
+        std::set<Program*> programs;
+
+        for (auto& actor : m_actors) {
+            auto model = actor->GetComponent<ModelRenderer>();
+            // Skip if there's no model component or the model is not active
+            if (!model || !model->active) {
+                continue;
+            }
+            if (model->material && model->material->program) {
+                programs.insert(model->material->program.get());
+            }
+        }
+
+        for (auto& program : programs) {
+            program->Use();
+            program->SetUniform("u_ambient_light", glm::vec3{ 0.2f });
+            camera->SetProgram(*program);
+            if (light)light->SetProgram(*program, "u_light", camera->view);
+        }
         // Iterate through all actors in the scene
         for (auto& actor : m_actors) {
             // Only render actors that are marked as active
@@ -238,7 +291,7 @@ namespace neu {
     /// prototypes (reusable actor templates) and actors (immediate scene content).
     /// 
     /// Processing order:
-    /// 1. Load base Object properties (name, active state)
+    /// 1. Load base Object properties (name, active, etc.)
     /// 2. Process prototypes and register them with the Factory
     /// 3. Process actors and add them to the scene
     /// 

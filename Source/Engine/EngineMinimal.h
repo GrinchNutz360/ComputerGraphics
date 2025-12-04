@@ -53,6 +53,11 @@
 #include "Renderer/Model.h"
 #include "Renderer/Material.h"
 
+//components
+#include "Components/ModelRenderer.h"
+#include "Components/CameraComponent.h"
+#include "Components/LightComponent.h"
+
 
 // physics
 #include "Physics/Collidable.h"
@@ -74,6 +79,7 @@
 #include <fstream>
 #include <memory>
 #include <vector>
+#include <set>
 #include <map>
 #include <list>
 #include <cstdlib>
