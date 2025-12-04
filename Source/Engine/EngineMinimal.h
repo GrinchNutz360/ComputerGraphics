@@ -57,6 +57,11 @@
 #include "Components/ModelRenderer.h"
 #include "Components/CameraComponent.h"
 #include "Components/LightComponent.h"
+#include "Components/FirstPersonController.h"
+
+// GUI
+#include "GUI/GUI.h"
+#include "GUI/Editor.h"
 
 
 // physics

@@ -1,6 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
-#include "GUI.h"
+#include "GUI/GUI.h"
 
 namespace neu {
 	class Program;

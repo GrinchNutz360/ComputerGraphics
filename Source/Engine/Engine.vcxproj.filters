@@ -39,6 +39,9 @@
     <Filter Include="Source\Physics">
       <UniqueIdentifier>{9ba8352a-461e-4a3f-a351-7ae28744a574}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\GUI">
+      <UniqueIdentifier>{d3ead6bf-7d4f-49cf-8d88-7900f4e14cbd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -139,6 +142,12 @@
     </ClCompile>
     <ClCompile Include="Components\LightComponent.cpp">
       <Filter>Source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\FirstPersonController.cpp">
+      <Filter>Source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Editor.cpp">
+      <Filter>Source\GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -268,14 +277,20 @@
     <ClInclude Include="Components\ModelRenderer.h">
       <Filter>Source\Components</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer\GUI.h">
-      <Filter>Source\Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="Components\CameraComponent.h">
       <Filter>Source\Components</Filter>
     </ClInclude>
     <ClInclude Include="Components\LightComponent.h">
       <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\FirstPersonController.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Editor.h">
+      <Filter>Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\GUI.h">
+      <Filter>Source\GUI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
