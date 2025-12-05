@@ -1,5 +1,5 @@
 {
-	"program": "shaders/basic_phong.prong",
+	"program": "shaders/basic_lit.prong",
 	"baseMap": "textures/cow.png",
 	"baseColor": [ 1, 1, 1 ],
 	"shininess": 128,

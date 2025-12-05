@@ -209,6 +209,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Build\Assets\imgui.ini" />
+    <None Include="..\..\Build\Assets\Materials\halloween.mat" />
     <None Include="..\..\Build\Assets\Materials\spot.mat" />
     <None Include="..\..\Build\Assets\Scenes\scene01.json" />
     <None Include="..\..\Build\Assets\Shaders\basic.frag" />
