@@ -42,7 +42,7 @@ namespace neu {
 		if (!normalName.empty()) normalMap = Resources().Get<Texture>(normalName);
 
 		//cubemap
-		std::string cubeMapName = "";
+		std::string cubeMapName;
 		SERIAL_READ_NAME(document, "cubeMap", cubeMapName);
 
 		if (!cubeMapName.empty()) cubeMap = Resources().Get<CubeMap>(cubeMapName);
@@ -105,6 +105,7 @@ namespace neu {
 		program->SetUniform("u_material.baseColor", baseColor);
 		program->SetUniform("u_material.emissiveColor", emissiveColor);
 		program->SetUniform("u_material.parameters", (uint32_t)(parameters));
+		program->SetUniform("u_ior.offset", ior);
 	}
 
 

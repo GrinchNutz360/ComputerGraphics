@@ -12,7 +12,7 @@
         {
           "type": "ModelRenderer",
           "model": "models/cow.obj",
-          "material": "materials/spot.mat"
+          "material": "materials/refraction.mat"
         }
       ]
     },
