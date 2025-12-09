@@ -209,9 +209,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Build\Assets\imgui.ini" />
+    <None Include="..\..\Build\Assets\Materials\crate.mat" />
+    <None Include="..\..\Build\Assets\Materials\floor.mat" />
     <None Include="..\..\Build\Assets\Materials\halloween.mat" />
+    <None Include="..\..\Build\Assets\Materials\rocks.mat" />
+    <None Include="..\..\Build\Assets\Materials\skybox.mat" />
     <None Include="..\..\Build\Assets\Materials\spot.mat" />
     <None Include="..\..\Build\Assets\Scenes\scene01.json" />
+    <None Include="..\..\Build\Assets\Scenes\scene02.json" />
     <None Include="..\..\Build\Assets\Shaders\basic.frag" />
     <None Include="..\..\Build\Assets\Shaders\basic.vert" />
     <None Include="..\..\Build\Assets\Shaders\basic_lit.frag" />
@@ -220,6 +225,9 @@
     <None Include="..\..\Build\Assets\Shaders\basic_phong.frag" />
     <None Include="..\..\Build\Assets\Shaders\basic_phong.prong" />
     <None Include="..\..\Build\Assets\Shaders\basic_phong.vert" />
+    <None Include="..\..\Build\Assets\Shaders\skybox.frag" />
+    <None Include="..\..\Build\Assets\Shaders\skybox.prong" />
+    <None Include="..\..\Build\Assets\Shaders\skybox.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\Build\Assets\Textures\beast.png" />

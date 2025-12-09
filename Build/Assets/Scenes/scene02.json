@@ -1,7 +1,25 @@
 {
   "actors": [
     {
-      "name": "cow",
+      "name": "skybox",
+      "persistent": true,
+      "transform": {
+        "position": [ 0, 0, 0 ],
+        "rotation": [ 0, 0, 0 ],
+        "scale": [ 1, 1, 1 ]
+      },
+      "components": [
+        {
+          "type": "ModelRenderer",
+          "model": "models/cube.obj",
+          "material": "materials/skybox.mat",
+          "enableDepth": false,
+          "cullFace": "front"
+        }
+      ]
+    },
+    {
+      "name": "box",
       "persistent": true,
       "transform": {
         "position": [ 0, 0, 0 ],
@@ -11,8 +29,8 @@
       "components": [
         {
           "type": "ModelRenderer",
-          "model": "models/cow.obj",
-          "material": "materials/spot.mat"
+          "model": "models/cube.obj",
+          "material": "materials/crate.mat"
         }
       ]
     },
@@ -21,7 +39,7 @@
       "persistent": true,
       "transform": {
         "position": [ 0, -1, 0 ],
-        "rotation": [ -90, 0, 0 ],
+        "rotation": [ 90, 0, 0 ],
         "scale": [ 0.1, 0.1, 0.1 ]
       },
       "components": [
@@ -81,7 +99,7 @@
           "type": "LightComponent",
           "color": [ 1, 1, 1 ],
           "intensity": [ 1 ],
-          "range": [ 8 ]
+          "range": [ 20 ]
         }
       ]
     },
@@ -90,7 +108,7 @@
       "persistent": true,
       "transform": {
         "position": [ 0, 5, 0 ],
-        "rotation": [ 0,90, 0 ],
+        "rotation": [ 0, 90, 0 ],
         "scale": [ 1, 1, 1 ]
       },
       "components": [
@@ -105,5 +123,6 @@
         }
       ]
     }
+
   ]
 }
