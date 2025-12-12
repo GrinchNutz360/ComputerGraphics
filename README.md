@@ -7,7 +7,7 @@ A high-performance C++ software renderer built on top of **OpenGL**, with suppor
 ## 📘 Introduction
 
 This project is a modular and extensible software renderer designed for learning, experimentation, and visualization of graphics-pipeline concepts.  
-Although it uses OpenGL as the drawing backend, all key stages of the rendering pipeline—transformation, lighting, rasterization logic, and shading—are implemented in **software**.
+Although it uses OpenGL as the drawing backend, all key stages of the rendering pipeline—transformation, lighting, rasterization logic, and shading—are implemented in **Visual Studio 2022**.
 
 The goal of this renderer is to provide a transparent, hackable graphics pipeline suitable for studying rendering techniques or building custom visual experiments.
 
